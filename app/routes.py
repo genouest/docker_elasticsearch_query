@@ -1,6 +1,7 @@
 from flask import Blueprint, current_app, jsonify, make_response, request
 
 app = Blueprint('app', __name__, url_prefix='/')
+import json
 
 
 @app.route('/')
@@ -10,30 +11,25 @@ def index():
     if not query:
         return make_response(jsonify({'error': "Missing 'q' parameter", 'data': []}), 400)
     search_index = current_app.config['ES_INDEX']
-    query = _generate_query(current_app.config, query)
-
+    es_query = _generate_query(current_app.config, query)
     try:
-        results = current_app.config['ES_INSTANCE'].search(index=search_index, query=query)
+        results = current_app.config['ES_INSTANCE'].search(index=search_index, query=es_query, source=['gene_id', 'organism'])
     except Exception as e:
-        make_response(jsonify({'error': str(e), 'data': []}), 400)
+        return make_response(jsonify({'error': str(e), 'data': []}), 400)
 
     return make_response(jsonify({'error': "", 'data': results['hits']['hits']}), 400)
 
 
-def _generate_query(config, query):
-    query = {
-        "_source": ["gene_id", "genome"]
-    }
-
+def _generate_query(config, user_query):
+    query = {}
     search_field = config['ES_SEARCH_FIELDS']
 
     if config["RESTRICT_PUBLIC"]:
-        query['query'] = {
-            "bool": {
+        query["bool"] = {
                 "must": [
                     {
                         "multi_match": {
-                            "query": query,
+                            "query": user_query,
                             **({'fields': search_field} if search_field else {})
                         }
                     },
@@ -44,12 +40,9 @@ def _generate_query(config, query):
                     }
                 ]
             }
-        }
     else:
-        query['query'] = {
-            "multi_match": {
-                "query": query,
-                **({'fields': search_field} if search_field else {})
-            }
+        query['multi_match'] = {
+            "query": user_query,
+            **({'fields': search_field} if search_field else {})
         }
     return query

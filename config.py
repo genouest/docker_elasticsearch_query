@@ -9,7 +9,8 @@ class Config(object):
     ES_INDEX = os.environ.get('ES_INDEX', 'genes')
     # Use restrict public if some datasets in Elasticsearch are private
     RESTRICT_PUBLIC = os.environ.get('RESTRICT_PUBLIC', False)
-    ES_SEARCH_FIELDS = os.environ.get('ES_SEARCH_FIELDS', "").split(",")
+    fields = os.environ.get('ES_SEARCH_FIELDS', "")
+    ES_SEARCH_FIELDS = fields.split(",") if fields else []
 
     es_url = "http://{}:{}".format(ES_URL, ES_PORT)
     ES_INSTANCE = Elasticsearch(es_url)
