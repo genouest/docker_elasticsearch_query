@@ -22,7 +22,7 @@ def index():
 
 def _generate_query(config, query):
     query = {
-        "_source": ["gene_id", "genome"]
+        "_source": ["gene_id", "organism", "organism_slug"]
     }
 
     search_field = config['ES_SEARCH_FIELDS']
