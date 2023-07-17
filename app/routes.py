@@ -10,7 +10,7 @@ def index():
     if not query:
         return make_response(jsonify({'error': "Missing 'q' parameter", 'data': []}), 400)
     search_index = current_app.config['ES_INDEX']
-    display_fields = current_app.conf['ES_DISPLAY_FIELDS']
+    display_fields = current_app.config['ES_DISPLAY_FIELDS']
     es_query = _generate_query(current_app.config, query)
     try:
         results = current_app.config['ES_INSTANCE'].search(index=search_index, query=es_query, source=display_fields)

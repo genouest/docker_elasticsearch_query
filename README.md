@@ -12,7 +12,7 @@ ES_INDEX = Index name. Default to 'genes'
 
 RESTRICT_PUBLIC = Whether to restrict queries to documents with 'public=True'. Default to False
 ES_SEARCH_FIELDS = List of comma-separated fields to search. Default to None, which will search on all fields
-ES_DISPLAY_FIELDS = List of comma-separated fields to return. Default to "gene_id,organism,organism_slug"
+ES_DISPLAY_FIELDS = List of comma-separated fields to return. Default to all
 ```
 
 Simple send your query to the '/' or '/query' endpoint, with the query itself as the 'q' get parameter.
