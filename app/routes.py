@@ -17,7 +17,7 @@ def index():
     except Exception as e:
         return make_response(jsonify({'error': str(e), 'data': []}), 400)
 
-    return make_response(jsonify({'error': "", 'data': results['hits']['hits']}), 400)
+    return make_response(jsonify({'error': "", 'data': results['hits']['hits']}), 200)
 
 
 def _generate_query(config, user_query):
