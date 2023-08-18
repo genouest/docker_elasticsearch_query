@@ -10,6 +10,7 @@ class Config(object):
     # Use restrict public if some datasets in Elasticsearch are private
     RESTRICT_PUBLIC = os.environ.get('RESTRICT_PUBLIC', False)
     search_fields = os.environ.get('ES_SEARCH_FIELDS', "")
+    ES_MAX_RESULTS = int(os.environ.get('ES_MAX_RESULTS', 10))
     ES_SEARCH_FIELDS = search_fields.split(",") if search_fields else []
     display_fields = os.environ.get('ES_DISPLAY_FIELDS', "gene_id,organism,organism_slug")
     ES_DISPLAY_FIELDS = display_fields.split(",") if display_fields else []
