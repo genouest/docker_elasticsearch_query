@@ -12,12 +12,13 @@ def index():
     search_index = current_app.config['ES_INDEX']
     display_fields = current_app.config['ES_DISPLAY_FIELDS']
     es_query = _generate_query(current_app.config, query)
+    highlight = {"fields": {"*": {}}}
     try:
-        results = current_app.config['ES_INSTANCE'].search(index=search_index, query=es_query, source=display_fields)
+        results = current_app.config['ES_INSTANCE'].search(index=search_index, query=es_query, source=display_fields, highlight=highlight)
     except Exception as e:
         return make_response(jsonify({'error': str(e), 'data': []}), 400)
 
-    return make_response(jsonify({'error': "", 'data': results['hits']['hits']}), 400)
+    return make_response(jsonify({'error': "", 'data': results['hits']['hits']}), 200)
 
 
 def _generate_query(config, user_query):
