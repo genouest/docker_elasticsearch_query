@@ -18,3 +18,10 @@ ES_HIGHLIGHT_TAG = Html tag (without <>) wrapping the highlights (matched terms)
 ```
 
 Simple send your query to the '/' or '/query' endpoint, with the query itself as the 'q' get parameter.
+You may pass additional get parameters depending on what you need
+
+```
+'highlighting': Boolean value, default to true. Whether the highlights will be returned by the query.
+'max_results': Integer value, default to the 'ES_MAX_RESULTS' env variable. How many results are returned by the query.
+'display_fields': Coma-separated list of fields. Default to the 'ES_DISPLAY_FIELDS' env variable. Which fields will be returned by the query
+```
