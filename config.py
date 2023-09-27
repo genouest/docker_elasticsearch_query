@@ -16,3 +16,4 @@ class Config(object):
     ES_DISPLAY_FIELDS = display_fields.split(",") if display_fields else []
     es_url = "http://{}:{}".format(ES_URL, ES_PORT)
     ES_INSTANCE = Elasticsearch(es_url)
+    ES_HIGHLIGHT_TAG = os.environ.get('HIGHLIGHT_TAG', 'em')
