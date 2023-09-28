@@ -26,7 +26,6 @@ def index():
         display_fields = request.args.get('display_fields').split(',')
 
     search_index = current_app.config['ES_INDEX']
-    display_fields = current_app.config['ES_DISPLAY_FIELDS']
     es_query = _generate_query(current_app.config, query)
     highlight = {}
     if show_highlight:
