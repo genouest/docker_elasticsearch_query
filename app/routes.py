@@ -15,10 +15,11 @@ def index():
         show_highlight = False
 
     max_results = current_app.config['ES_MAX_RESULTS']
-    try:
-        max_results = int(request.args.get('max_results'))
-    except (ValueError, TypeError):
-        return make_response(jsonify({'error': "'max_results' parameter is not an integer", 'data': []}), 400)
+    if 'max_results' in request.args:
+        try:
+            max_results = int(request.args.get('max_results'))
+        except (ValueError, TypeError):
+            return make_response(jsonify({'error': "'max_results' parameter is not an integer", 'data': []}), 400)
 
     display_fields = current_app.config['ES_DISPLAY_FIELDS']
     if 'display_fields' in request.args:
