@@ -17,7 +17,7 @@ def index():
     max_results = current_app.config['ES_MAX_RESULTS']
     try:
         max_results = int(request.args.get('max_results'))
-    except ValueError:
+    except (ValueError, TypeError):
         return make_response(jsonify({'error': "'max_results' parameter is not an integer", 'data': []}), 400)
 
     display_fields = current_app.config['ES_DISPLAY_FIELDS']
