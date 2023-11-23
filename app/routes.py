@@ -26,7 +26,13 @@ def index():
         display_fields = request.args.get('display_fields').split(',')
 
     search_index = current_app.config['ES_INDEX']
-    es_query = _generate_query(current_app.config, query)
+
+    filters = {}
+    for key, value in request.args.items():
+        if key not in ['q', 'highlighting', 'display_fields', 'max_results'] and key in current_app.config['ES_ALLOWED_FILTERS']:
+            filters[key] = value
+
+    es_query = _generate_query(current_app.config, query, filters)
     highlight = {}
     if show_highlight:
         highlight_pre = ["<{}>".format(current_app.config['ES_HIGHLIGHT_TAG'])]
@@ -40,11 +46,14 @@ def index():
     return make_response(jsonify({'error': "", 'data': results['hits']['hits']}), 200)
 
 
-def _generate_query(config, user_query):
+def _generate_query(config, user_query, filters):
     query = {}
     search_field = config['ES_SEARCH_FIELDS']
 
     if config["RESTRICT_PUBLIC"]:
+        filters['public'] = True
+
+    if filters:
         query["bool"] = {
             "must": [
                 {
@@ -54,9 +63,7 @@ def _generate_query(config, user_query):
                     }
                 },
                 {
-                    "term": {
-                        "public": True
-                    }
+                    "term": {**filters}
                 }
             ]
         }
