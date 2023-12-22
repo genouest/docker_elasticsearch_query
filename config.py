@@ -8,7 +8,7 @@ class Config(object):
     ES_PORT = os.environ.get('ES_PORT', '9200')
     ES_INDEX = os.environ.get('ES_INDEX', 'genes')
     # Use restrict public if some datasets in Elasticsearch are private
-    RESTRICT_PUBLIC = os.environ.get('RESTRICT_PUBLIC', False)
+    RESTRICT_PUBLIC = os.environ.get('RESTRICT_PUBLIC', 'False').lower() in ('true', '1', 't')
     ES_MAX_RESULTS = int(os.environ.get('ES_MAX_RESULTS', 10))
     search_fields = os.environ.get('ES_SEARCH_FIELDS', "")
     ES_SEARCH_FIELDS = search_fields.split(",") if search_fields else []
