@@ -59,6 +59,7 @@ def _generate_query(config, user_query, filters):
                 {
                     "multi_match": {
                         "query": user_query,
+                        "type": "phrase",
                         **({'fields': search_field} if search_field else {})
                     }
                 },
@@ -70,6 +71,7 @@ def _generate_query(config, user_query, filters):
     else:
         query['multi_match'] = {
             "query": user_query,
+            "type": "phrase",
             **({'fields': search_field} if search_field else {})
         }
     return query
