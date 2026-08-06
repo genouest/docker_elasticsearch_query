@@ -1,4 +1,4 @@
-FROM python:3.8.10-slim-buster
+FROM python:3.11.15-bookworm
 
 RUN mkdir /beaures_query
 

@@ -46,6 +46,48 @@ def index():
     return make_response(jsonify({'error': "", 'data': results['hits']['hits']}), 200)
 
 
+@app.route('/id/<identifier>')
+def get_by_id(identifier):
+    search_index = current_app.config['ES_INDEX']
+    id_fields = ['protein_id', 'gene_id']
+
+    requested_field = request.args.get('field')
+    if requested_field:
+        if requested_field not in id_fields:
+            return make_response(
+                jsonify({
+                    'error': "'field' must be one of: {}".format(', '.join(id_fields)),
+                    'data': []
+                }),
+                400
+            )
+        fields_to_search = [requested_field]
+    else:
+        fields_to_search = id_fields
+
+    query = {
+        "bool": {
+            "should": [{"match": {field: identifier}} for field in fields_to_search],
+            "minimum_should_match": 1
+        }
+    }
+
+    if current_app.config['RESTRICT_PUBLIC']:
+        query["bool"]["filter"] = [{"term": {"public": True}}]
+
+    try:
+        results = current_app.config['ES_INSTANCE'].search(
+            index=search_index, query=query, size=5
+        )
+    except Exception as e:
+        return make_response(jsonify({'error': str(e), 'data': []}), 400)
+
+    hits = results['hits']['hits']
+    if not hits:
+        return make_response(jsonify({'error': 'No record found', 'data': []}), 404)
+
+    return make_response(jsonify({'error': "", 'data': hits[0]}), 200)
+
 def _generate_query(config, user_query, filters):
     query = {}
     search_field = config['ES_SEARCH_FIELDS']
