@@ -50,6 +50,7 @@ def index():
 def get_by_id(identifier):
     search_index = current_app.config['ES_INDEX']
     id_fields = ['protein_id', 'gene_id']
+    filter_fields = ['organism', 'annotation', 'assembly']
 
     requested_field = request.args.get('field')
     if requested_field:
@@ -72,12 +73,21 @@ def get_by_id(identifier):
         }
     }
 
+    filter_clauses = []
+    for filter_field in filter_fields:
+        value = request.args.get(filter_field)
+        if value:
+            filter_clauses.append({"match": {filter_field: value}})
+
     if current_app.config['RESTRICT_PUBLIC']:
-        query["bool"]["filter"] = [{"term": {"public": True}}]
+        filter_clauses.append({"term": {"public": True}})
+
+    if filter_clauses:
+        query["bool"]["filter"] = filter_clauses
 
     try:
         results = current_app.config['ES_INSTANCE'].search(
-            index=search_index, query=query, size=5
+            index=search_index, query=query, size=1
         )
     except Exception as e:
         return make_response(jsonify({'error': str(e), 'data': []}), 400)
